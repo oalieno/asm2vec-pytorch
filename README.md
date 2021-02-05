@@ -8,8 +8,8 @@ The details of the model can be found in the original paper: [(sp'19) Asm2Vec: B
 This implementation is written in python 3.8.
 
 You need `r2pipe` to run `bin2asm.py`  
-You need `click` to run both `bin2asm.py` and `train.py`  
-You need `torch` to run `train.py` and `asm2vec` library
+You need `click` to run `bin2asm.py`, `train.py` and `test.py`  
+You need `torch` to run `train.py`, `test.py` and `asm2vec` library
 
 ## Benchmark
 
@@ -49,13 +49,40 @@ python bin2asm.py -i /bin/ -o asm/
 Usage: train.py [OPTIONS]
 
 Options:
-  -i, --input TEXT     training data folder  [required]
-  -o, --output TEXT    output model path
-  -e, --epoch INTEGER  training epoch
-  --help               Show this message and exit.
+  -i, --input TEXT                training data folder  [required]
+  -o, --output TEXT               output model path  [default: ./model.pt]
+  -d, --ebedding-dimension INTEGER
+                                  embedding dimension  [default: 100]
+  -b, --batch-size INTEGER        batch size  [default: 1024]
+  -e, --epochs INTEGER            training epochs  [default: 10]
+  -n, --neg-sample-num INTEGER    negative sampling amount  [default: 25]
+  -c, --device TEXT               hardware device to be used: cpu / cuda /
+                                  auto  [default: auto]
+
+  --help                          Show this message and exit.
 ```
 
 ```bash
 # Example
 python train.py -i asm/ -o model.pt --epoch 100
+```
+
+---
+
+```
+Usage: test.py [OPTIONS]
+
+Options:
+  -i, --input TEXT      target function  [required]
+  -m, --model TEXT      model path  [required]
+  -e, --epochs INTEGER  training epochs  [default: 10]
+  -c, --device TEXT     hardware device to be used: cpu / cuda / auto
+                        [default: auto]
+
+  --help                Show this message and exit.
+```
+
+```bash
+# Example
+python test.py -i asm/123456 -m model.pt
 ```
