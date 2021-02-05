@@ -66,7 +66,8 @@ def bin2asm(filename, opath, minlen):
 
     for fn in r.cmdj('aflj'):
         r.cmd(f's {fn["offset"]}')
-        if asm := fn2asm(r.cmdj('pdfj'), minlen):
+        asm = fn2asm(r.cmdj('pdfj'), minlen)
+        if asm:
             uid = sha3(asm)
             asm = f''' .name {fn["name"]}
  .offset {fn["offset"]:016x}
