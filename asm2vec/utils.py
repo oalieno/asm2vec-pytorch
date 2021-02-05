@@ -110,7 +110,7 @@ def show_probs(x, y, probs, tokens, pretty=False):
         print(LM + H * 8 + TM + H * 33 + RM)
         for value, index in zip(top.values[i], top.indices[i]):
             if index in yi:
-                colorbegin, colorclear = '\033[96m', '\033[0m'
+                colorbegin, colorclear = '\033[92m', '\033[0m'
             else:
                 colorbegin, colorclear = '', ''
             print(f'{V} {colorbegin}{value*100:05.2f}%{colorclear} {V} {colorbegin}{tokens[index.item()].name:31}{colorclear} {V}')
