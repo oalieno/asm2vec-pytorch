@@ -91,19 +91,27 @@ def load_model(path):
     model.load_state_dict(checkpoint['model'])
     return model, tokens
 
-def show_probs(x, y, probs, tokens):
+def show_probs(x, y, probs, tokens, pretty=False):
+    if pretty:
+        TL, TR, BL, BR = '┌', '┐', '└', '┘'
+        LM, RM, TM, BM = '├', '┤', '┬', '┴'
+        H, V = '─', '│'
+    else:
+        TL = TR = BL = BR = '+'
+        LM = RM = TM = BM = '+'
+        H, V = '-', '|'
     top = probs.topk(5)
     for i, (xi, yi) in enumerate(zip(x, y)):
         xi, yi = xi.tolist(), yi.tolist()
-        print('┌' + '─' * 42 + '┐')
-        print(f'│ {str(Instruction(tokens[xi[1]], tokens[xi[2:4]])):40} │')
-        print(f'│ {str(Instruction(tokens[yi[0]], tokens[yi[1:3]])):40} │')
-        print(f'│ {str(Instruction(tokens[xi[4]], tokens[xi[5:7]])):40} │')
-        print('├' + '─' * 8 + '┬' + '─' * 33 + '┤')
+        print(TL + H * 42 + TR)
+        print(f'{V} {str(Instruction(tokens[xi[1]], tokens[xi[2:4]])):40} {V}')
+        print(f'{V} {str(Instruction(tokens[yi[0]], tokens[yi[1:3]])):40} {V}')
+        print(f'{V} {str(Instruction(tokens[xi[4]], tokens[xi[5:7]])):40} {V}')
+        print(LM + H * 8 + TM + H * 33 + RM)
         for value, index in zip(top.values[i], top.indices[i]):
             if index in yi:
                 colorbegin, colorclear = '\033[96m', '\033[0m'
             else:
                 colorbegin, colorclear = '', ''
-            print(f'│ {colorbegin}{value*100:05.2f}%{colorclear} │ {colorbegin}{tokens[index.item()].name:31}{colorclear} │')
-        print('└' + '─' * 8 + '┴' + '─' * 33 + '┘')
+            print(f'{V} {colorbegin}{value*100:05.2f}%{colorclear} {V} {colorbegin}{tokens[index.item()].name:31}{colorclear} {V}')
+        print(BL + H * 8 + BM + H * 33 + BR)

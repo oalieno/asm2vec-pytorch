@@ -8,7 +8,8 @@ import asm2vec
 @click.option('-m', '--model', 'mpath', help='model path', required=True)
 @click.option('-e', '--epochs', default=10, help='training epochs', show_default=True)
 @click.option('-c', '--device', default='auto', help='hardware device to be used: cpu / cuda / auto', show_default=True)
-def cli(ipath, mpath, epochs, device):
+@click.option('-p', '--pretty', default=False, help='pretty print table', show_default=True, is_flag=True)
+def cli(ipath, mpath, epochs, device, pretty):
     if device == 'auto':
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -17,14 +18,16 @@ def cli(ipath, mpath, epochs, device):
     # reset model function embedding
     model.embeddings_f = nn.Embedding(1, 2 * model.embeddings.embedding_dim)
 
+    model = model.to(device)
+
     # train function embedding
     functions, _ = asm2vec.utils.load_data(ipath)
     model = asm2vec.utils.train(functions, tokens, model=model, epochs=epochs, device=device, mode='test')
 
     # show predict probabilities
     x, y = asm2vec.utils.preprocess(functions, tokens)
-    probs = model.predict(x, y)
-    asm2vec.utils.show_probs(x, y, probs, tokens)
+    probs = model.predict(x.to(device), y.to(device))
+    asm2vec.utils.show_probs(x, y, probs, tokens, pretty)
 
 if __name__ == '__main__':
     cli()
