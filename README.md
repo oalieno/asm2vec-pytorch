@@ -87,6 +87,7 @@ Options:
 python test.py -i asm/123456 -m model.pt
 ```
 
+```
 ┌──────────────────────────────────────────┐
 │ mov rcx, qword fs:[CONST]                │
 │ lea rax, [rsp + CONST]                   │
@@ -98,3 +99,4 @@ python test.py -i asm/123456 -m model.pt
 │ 01.36% │ qword [rax + CONST]             │
 │ 00.99% │ qword [rcx + CONST]             │
 └────────┴─────────────────────────────────┘
+```
