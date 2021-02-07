@@ -6,6 +6,15 @@ from pathlib import Path
 from .datatype import Tokens, Function, Instruction
 from .model import ASM2VEC
 
+class AsmDataset(Dataset):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    def __len__(self):
+        return len(self.x)
+    def __getitem__(self, index):
+        return self.x[index], self.y[index]
+
 def load_data(path, limit=None):
     if os.path.isdir(path):
         filenames = [Path(path) / filename for filename in os.listdir(path) if os.path.isfile(Path(path) / filename)]
@@ -31,15 +40,6 @@ def preprocess(functions, tokens):
                 x.append([i] + [tokens[token].index for token in seq[j-1].tokens() + seq[j+1].tokens()])
                 y.append([tokens[token].index for token in seq[j].tokens()])
     return torch.tensor(x), torch.tensor(y)
-
-class AsmDataset(Dataset):
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-    def __len__(self):
-        return len(self.x)
-    def __getitem__(self, index):
-        return self.x[index], self.y[index]
 
 def train(functions, tokens, model=None, embedding_size=100, batch_size=1024, epochs=10, neg_sample_num=25, device='cpu', mode='train'):
     if mode == 'train':
@@ -91,22 +91,26 @@ def load_model(path, device='cpu'):
     model.load_state_dict(checkpoint['model'])
     return model, tokens
 
-def show_probs(x, y, probs, tokens, pretty=False):
+def show_probs(x, y, probs, tokens, limit=None, pretty=False):
     if pretty:
         TL, TR, BL, BR = '┌', '┐', '└', '┘'
         LM, RM, TM, BM = '├', '┤', '┬', '┴'
         H, V = '─', '│'
+        arrow = ' ➔'
     else:
         TL = TR = BL = BR = '+'
         LM = RM = TM = BM = '+'
         H, V = '-', '|'
+        arrow = '->'
     top = probs.topk(5)
     for i, (xi, yi) in enumerate(zip(x, y)):
+        if i >= limit:
+            break
         xi, yi = xi.tolist(), yi.tolist()
         print(TL + H * 42 + TR)
-        print(f'{V} {str(Instruction(tokens[xi[1]], tokens[xi[2:4]])):40} {V}')
-        print(f'{V} {str(Instruction(tokens[yi[0]], tokens[yi[1:3]])):40} {V}')
-        print(f'{V} {str(Instruction(tokens[xi[4]], tokens[xi[5:7]])):40} {V}')
+        print(f'{V}    {str(Instruction(tokens[xi[1]], tokens[xi[2:4]])):37} {V}')
+        print(f'{V} {arrow} {str(Instruction(tokens[yi[0]], tokens[yi[1:3]])):37} {V}')
+        print(f'{V}    {str(Instruction(tokens[xi[4]], tokens[xi[5:7]])):37} {V}')
         print(LM + H * 8 + TM + H * 33 + RM)
         for value, index in zip(top.values[i], top.indices[i]):
             if index in yi:

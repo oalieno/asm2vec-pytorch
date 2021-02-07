@@ -1,5 +1,6 @@
 import torch
 import random
+import warnings
 
 class Token:
     def __init__(self, name, index):
@@ -16,6 +17,9 @@ class Tokens:
         self._weights = None
     def __getitem__(self, key):
         if type(key) is str:
+            if self.name_to_index.get(key) is None:
+                warnings.warn("Unknown token in training dataset")
+                return self.tokens[self.name_to_index[""]]
             return self.tokens[self.name_to_index[key]]
         elif type(key) is int:
             return self.tokens[key]
