@@ -91,14 +91,14 @@ python test.py -i asm/123456 -m model.pt
 
 ```
 ┌──────────────────────────────────────────┐
-│ mov rcx, qword fs:[CONST]                │
-│ lea rax, [rsp + CONST]                   │
-│ cmp rax, qword [rcx + CONST]             │
+│    endbr64                               │
+│  ➔ push r15                              │
+│    push r14                              │
 ├────────┬─────────────────────────────────┤
-│ 76.20% │ lea                             │
-│ 18.50% │ rbx                             │
-│ 01.60% │ [r11 + r13]                     │
-│ 01.36% │ qword [rax + CONST]             │
-│ 00.99% │ qword [rcx + CONST]             │
+│ 34.68% │ [rdx + rsi*CONST + CONST]       │
+│ 20.29% │ push                            │
+│ 16.22% │ r15                             │
+│ 04.36% │ r14                             │
+│ 03.55% │ r11d                            │
 └────────┴─────────────────────────────────┘
 ```
