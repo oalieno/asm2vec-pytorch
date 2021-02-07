@@ -78,9 +78,11 @@ Options:
   -i, --input TEXT      target function  [required]
   -m, --model TEXT      model path  [required]
   -e, --epochs INTEGER  training epochs  [default: 10]
+  -l, --limit INTEGER   limit the amount of output probability result
   -c, --device TEXT     hardware device to be used: cpu / cuda / auto
                         [default: auto]
 
+  -p, --pretty          pretty print table  [default: False]
   --help                Show this message and exit.
 ```
 
