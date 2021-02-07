@@ -24,6 +24,8 @@ Following is the benchmark of training 1000 functions in 1 epoch.
 
 ## Usage
 
+### bin2asm.py
+
 ```
 Usage: bin2asm.py [OPTIONS]
 
@@ -43,7 +45,7 @@ Options:
 python bin2asm.py -i /bin/ -o asm/
 ```
 
----
+### train.py
 
 ```
 Usage: train.py [OPTIONS]
@@ -67,7 +69,7 @@ Options:
 python train.py -i asm/ -o model.pt --epoch 100
 ```
 
----
+### test.py
 
 ```
 Usage: test.py [OPTIONS]
