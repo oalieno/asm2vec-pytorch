@@ -86,3 +86,15 @@ Options:
 # Example
 python test.py -i asm/123456 -m model.pt
 ```
+
+┌──────────────────────────────────────────┐
+│ mov rcx, qword fs:[CONST]                │
+│ lea rax, [rsp + CONST]                   │
+│ cmp rax, qword [rcx + CONST]             │
+├────────┬─────────────────────────────────┤
+│ 76.20% │ lea                             │
+│ 18.50% │ rbx                             │
+│ 01.60% │ [r11 + r13]                     │
+│ 01.36% │ qword [rax + CONST]             │
+│ 00.99% │ qword [rcx + CONST]             │
+└────────┴─────────────────────────────────┘
