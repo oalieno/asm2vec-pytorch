@@ -14,7 +14,7 @@ def cli(ipath, mpath, epochs, device, pretty):
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     # load tokens, model
-    model, tokens = asm2vec.utils.load_model(mpath)
+    model, tokens = asm2vec.utils.load_model(mpath, device=device)
     # reset model function embedding
     model.embeddings_f = nn.Embedding(1, 2 * model.embeddings.embedding_dim)
 

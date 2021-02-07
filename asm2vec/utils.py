@@ -83,8 +83,8 @@ def save_model(path, model, tokens):
         'tokens': tokens.state_dict(),
     }, path)
 
-def load_model(path):
-    checkpoint = torch.load(path)
+def load_model(path, device='cpu'):
+    checkpoint = torch.load(path, map_location=device)
     tokens = Tokens()
     tokens.load_state_dict(checkpoint['tokens'])
     model = ASM2VEC(*checkpoint['model_params'])
