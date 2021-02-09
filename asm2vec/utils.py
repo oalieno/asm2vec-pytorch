@@ -23,12 +23,12 @@ def load_data(path, limit=None):
     
     functions, tokens = [], Tokens()
     for i, filename in enumerate(filenames):
+        if limit and i >= limit:
+            break
         with open(filename) as f:
             fn = Function.load(f.read())
             functions.append(fn)
             tokens.add(fn.tokens())
-        if limit and i >= limit:
-            break
     
     return functions, tokens
 
@@ -41,7 +41,7 @@ def preprocess(functions, tokens):
                 y.append([tokens[token].index for token in seq[j].tokens()])
     return torch.tensor(x), torch.tensor(y)
 
-def train(functions, tokens, model=None, embedding_size=100, batch_size=1024, epochs=10, neg_sample_num=25, device='cpu', mode='train'):
+def train(functions, tokens, model=None, embedding_size=100, batch_size=1024, epochs=10, neg_sample_num=25, device='cpu', mode='train', path='model.pt'):
     if mode == 'train':
         if model is None:
             model = ASM2VEC(tokens.size(), function_size=len(functions), embedding_size=embedding_size).to(device)
@@ -69,6 +69,8 @@ def train(functions, tokens, model=None, embedding_size=100, batch_size=1024, ep
             optimizer.step()
         
         print(f'{epoch} | time = {time.time() - start:.2f}, loss = {loss_sum / loss_count:.4f}')
+
+        save_model(path, model, tokens)
 
     return model
 
