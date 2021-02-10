@@ -91,6 +91,7 @@ def load_model(path, device='cpu'):
     tokens.load_state_dict(checkpoint['tokens'])
     model = ASM2VEC(*checkpoint['model_params'])
     model.load_state_dict(checkpoint['model'])
+    model.to(device)
     return model, tokens
 
 def show_probs(x, y, probs, tokens, limit=None, pretty=False):
