@@ -5,7 +5,7 @@ import asm2vec
 @click.command()
 @click.option('-i', '--input', 'ipath', help='training data folder', required=True)
 @click.option('-o', '--output', 'opath', default='model.pt', help='output model path', show_default=True)
-@click.option('-m', '--model', 'mpath', help='load model path', type=str)
+@click.option('-m', '--model', 'mpath', help='load previous trained model path', type=str)
 @click.option('-l', '--limit', help='limit the number of functions to be loaded', show_default=True, type=int)
 @click.option('-d', '--ebedding-dimension', 'embedding_size', default=100, help='embedding dimension', show_default=True)
 @click.option('-b', '--batch-size', 'batch_size', default=1024, help='batch size', show_default=True)

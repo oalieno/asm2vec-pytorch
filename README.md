@@ -5,11 +5,27 @@ The details of the model can be found in the original paper: [(sp'19) Asm2Vec: B
 
 ## Requirements
 
-This implementation is written in python 3.8.
+python >= 3.6
 
-You need `r2pipe` to run `bin2asm.py`  
-You need `click` to run `bin2asm.py`, `train.py` and `test.py`  
-You need `torch` to run `train.py`, `test.py` and `asm2vec` library
+| packages | for |
+| --- | --- |
+| r2pipe | `scripts/bin2asm.py` |
+| click | `scripts/*` |
+| torch | almost all code need it |
+
+If you only use the library code, you just need to install `torch`
+
+## Install
+
+```
+python setup.py install
+```
+
+or
+
+```
+pip install git+https://github.com/oalieno/asm2vec-pytorch.git
+```
 
 ## Benchmark
 
@@ -52,7 +68,9 @@ Usage: train.py [OPTIONS]
 
 Options:
   -i, --input TEXT                training data folder  [required]
-  -o, --output TEXT               output model path  [default: ./model.pt]
+  -o, --output TEXT               output model path  [default: model.pt]
+  -m, --model TEXT                load previous trained model path
+  -l, --limit INTEGER             limit the number of functions to be loaded
   -d, --ebedding-dimension INTEGER
                                   embedding dimension  [default: 100]
   -b, --batch-size INTEGER        batch size  [default: 1024]
