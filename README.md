@@ -1,10 +1,8 @@
 # asm2vec-pytorch
 
-<div align="center">
-    <a><img alt="release 1.0.0" src="https://img.shields.io/badge/release-v1.0.0-yellow?style=for-the-badge"></a>
-    <a><img alt="mit" src="https://img.shields.io/badge/license-MIT-brightgreen?style=for-the-badge"></a>
-    <a><img alt="python" src="https://img.shields.io/badge/-python-9cf?style=for-the-badge&logo=python"></a>
-</div>
+<a><img alt="release 1.0.0" src="https://img.shields.io/badge/release-v1.0.0-yellow?style=for-the-badge"></a>
+<a><img alt="mit" src="https://img.shields.io/badge/license-MIT-brightgreen?style=for-the-badge"></a>
+<a><img alt="python" src="https://img.shields.io/badge/-python-9cf?style=for-the-badge&logo=python"></a>
 
 Unofficial implementation of `asm2vec` using pytorch ( with GPU acceleration )  
 The details of the model can be found in the original paper: [(sp'19) Asm2Vec: Boosting Static Representation Robustness for Binary Clone Search against Code Obfuscation and Compiler Optimization](https://www.computer.org/csdl/proceedings-article/sp/2019/666000a038/19skfc3ZfKo)  
