@@ -70,7 +70,8 @@ def train(functions, tokens, model=None, embedding_size=100, batch_size=1024, ep
         
         print(f'{epoch} | time = {time.time() - start:.2f}, loss = {loss_sum / loss_count:.4f}')
 
-        save_model(path, model, tokens)
+        if mode == 'train':
+            save_model(path, model, tokens)
 
     return model
 
