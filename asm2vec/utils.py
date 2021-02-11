@@ -108,7 +108,7 @@ def show_probs(x, y, probs, tokens, limit=None, pretty=False):
         arrow = '->'
     top = probs.topk(5)
     for i, (xi, yi) in enumerate(zip(x, y)):
-        if i >= limit:
+        if limit and i >= limit:
             break
         xi, yi = xi.tolist(), yi.tolist()
         print(TL + H * 42 + TR)
