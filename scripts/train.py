@@ -18,7 +18,9 @@ def cli(ipath, opath, mpath, limit, embedding_size, batch_size, epochs, neg_samp
     
     if mpath:
         model, tokens = asm2vec.utils.load_model(mpath, device=device)
-        functions, _ = asm2vec.utils.load_data(ipath, limit=limit)
+        functions, tokens_new = asm2vec.utils.load_data(ipath, limit=limit)
+        tokens.update(tokens_new)
+        model.update(len(functions), tokens.size())
     else:
         model = None
         functions, tokens = asm2vec.utils.load_data(ipath, limit=limit)

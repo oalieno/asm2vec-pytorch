@@ -14,15 +14,15 @@ def cli(ipath, mpath, epochs, limit, device, pretty):
     if device == 'auto':
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    # load tokens, model
+    # load model, tokens
     model, tokens = asm2vec.utils.load_model(mpath, device=device)
-    # reset model function embedding
-    model.embeddings_f = nn.Embedding(1, 2 * model.embeddings.embedding_dim)
-
+    functions, tokens_new = asm2vec.utils.load_data(ipath)
+    tokens.update(tokens_new)
+    model.update(1, tokens.size())
+    
     model = model.to(device)
 
     # train function embedding
-    functions, _ = asm2vec.utils.load_data(ipath)
     model = asm2vec.utils.train(functions, tokens, model=model, epochs=epochs, device=device, mode='test')
 
     # show predict probabilities

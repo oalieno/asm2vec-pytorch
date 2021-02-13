@@ -46,6 +46,14 @@ class Tokens:
                 self.tokens.append(token)
             else:
                 self.tokens[self.name_to_index[name]].count += 1
+    def update(self, tokens_new):
+        for token in tokens_new:
+            if token.name not in self.name_to_index:
+                token.index = len(self.tokens)
+                self.name_to_index[token.name] = token.index
+                self.tokens.append(token)
+            else:
+                self.tokens[self.name_to_index[token.name]].count += token.count
     def weights(self):
         # if no cache, calculate
         if self._weights is None:
