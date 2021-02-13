@@ -17,7 +17,7 @@ class AsmDataset(Dataset):
 
 def load_data(path, limit=None):
     if os.path.isdir(path):
-        filenames = [Path(path) / filename for filename in os.listdir(path) if os.path.isfile(Path(path) / filename)]
+        filenames = [Path(path) / filename for filename in sorted(os.listdir(path)) if os.path.isfile(Path(path) / filename)]
     else:
         filenames = [Path(path)]
     
