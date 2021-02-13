@@ -11,17 +11,18 @@ class ASM2VEC(nn.Module):
         self.embeddings_r = nn.Embedding(vocab_size, 2 * embedding_size)
 
     def update(self, function_size_new, vocab_size_new):
+        device = self.embeddings.weight.device
         vocab_size, function_size, embedding_size = self.embeddings.num_embeddings, self.embeddings_f.num_embeddings, self.embeddings.embedding_dim
         if vocab_size_new != vocab_size:
-            weight = torch.cat([self.embeddings.weight, torch.rand(vocab_size_new - vocab_size, embedding_size)])
+            weight = torch.cat([self.embeddings.weight, torch.rand(vocab_size_new - vocab_size, embedding_size).to(device)])
             self.embeddings = nn.Embedding(vocab_size_new, embedding_size, _weight=weight)
-            weight_r = torch.cat([self.embeddings_r.weight, torch.rand(vocab_size_new - vocab_size, 2 * embedding_size)])
+            weight_r = torch.cat([self.embeddings_r.weight, torch.rand(vocab_size_new - vocab_size, 2 * embedding_size).to(device)])
             self.embeddings_r = nn.Embedding(vocab_size_new, 2 * embedding_size, _weight=weight_r)
         if function_size_new != function_size:
             if function_size_new < function_size:
                 weight_f = self.embeddings_f.weight[:function_size_new]
             else:
-                weight_f = torch.cat([self.embeddings_f.weight, torch.rand(function_size_new - function_size, 2 * embedding_size)])
+                weight_f = torch.cat([self.embeddings_f.weight, torch.rand(function_size_new - function_size, 2 * embedding_size).to(device)])
             self.embeddings_f = nn.Embedding(function_size_new, 2 * embedding_size, _weight=weight_f)
 
     def v(self, inp):
