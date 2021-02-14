@@ -15,11 +15,16 @@ class AsmDataset(Dataset):
     def __getitem__(self, index):
         return self.x[index], self.y[index]
 
-def load_data(path, limit=None):
-    if os.path.isdir(path):
-        filenames = [Path(path) / filename for filename in sorted(os.listdir(path)) if os.path.isfile(Path(path) / filename)]
-    else:
-        filenames = [Path(path)]
+def load_data(paths, limit=None):
+    if type(paths) is not list:
+        paths = [paths]
+   
+    filenames = []
+    for path in paths:
+        if os.path.isdir(path):
+            filenames += [Path(path) / filename for filename in sorted(os.listdir(path)) if os.path.isfile(Path(path) / filename)]
+        else:
+            filenames += [Path(path)]
     
     functions, tokens = [], Tokens()
     for i, filename in enumerate(filenames):
@@ -41,7 +46,7 @@ def preprocess(functions, tokens):
                 y.append([tokens[token].index for token in seq[j].tokens()])
     return torch.tensor(x), torch.tensor(y)
 
-def train(functions, tokens, model=None, embedding_size=100, batch_size=1024, epochs=10, neg_sample_num=25, device='cpu', mode='train', path='model.pt'):
+def train(functions, tokens, model=None, embedding_size=100, batch_size=1024, epochs=10, neg_sample_num=25, device='cpu', mode='train', path='model.pt', quiet=False):
     if mode == 'train':
         if model is None:
             model = ASM2VEC(tokens.size(), function_size=len(functions), embedding_size=embedding_size).to(device)
@@ -68,7 +73,8 @@ def train(functions, tokens, model=None, embedding_size=100, batch_size=1024, ep
             loss.backward()
             optimizer.step()
         
-        print(f'{epoch} | time = {time.time() - start:.2f}, loss = {loss_sum / loss_count:.4f}')
+        if not quiet:
+            print(f'{epoch} | time = {time.time() - start:.2f}, loss = {loss_sum / loss_count:.4f}')
 
         if mode == 'train':
             save_model(path, model, tokens)
