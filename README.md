@@ -82,6 +82,9 @@ Options:
   -b, --batch-size INTEGER        batch size  [default: 1024]
   -e, --epochs INTEGER            training epochs  [default: 10]
   -n, --neg-sample-num INTEGER    negative sampling amount  [default: 25]
+  -a, --calculate-accuracy        whether calculate accuracy ( will be
+                                  significantly slower )
+
   -c, --device TEXT               hardware device to be used: cpu / cuda /
                                   auto  [default: auto]
 
@@ -99,15 +102,16 @@ python train.py -i asm/ -o model.pt --epoch 100
 Usage: test.py [OPTIONS]
 
 Options:
-  -i, --input TEXT      target function  [required]
-  -m, --model TEXT      model path  [required]
-  -e, --epochs INTEGER  training epochs  [default: 10]
-  -l, --limit INTEGER   limit the amount of output probability result
-  -c, --device TEXT     hardware device to be used: cpu / cuda / auto
-                        [default: auto]
+  -i, --input TEXT              target function  [required]
+  -m, --model TEXT              model path  [required]
+  -e, --epochs INTEGER          training epochs  [default: 10]
+  -n, --neg-sample-num INTEGER  negative sampling amount  [default: 25]
+  -l, --limit INTEGER           limit the amount of output probability result
+  -c, --device TEXT             hardware device to be used: cpu / cuda / auto
+                                [default: auto]
 
-  -p, --pretty          pretty print table  [default: False]
-  --help                Show this message and exit.
+  -p, --pretty                  pretty print table  [default: False]
+  --help                        Show this message and exit.
 ```
 
 ```bash
