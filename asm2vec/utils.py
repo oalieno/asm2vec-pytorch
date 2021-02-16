@@ -46,7 +46,19 @@ def preprocess(functions, tokens):
                 y.append([tokens[token].index for token in seq[j].tokens()])
     return torch.tensor(x), torch.tensor(y)
 
-def train(functions, tokens, model=None, embedding_size=100, batch_size=1024, epochs=10, neg_sample_num=25, device='cpu', mode='train', path='model.pt', quiet=False):
+def train(
+    functions,
+    tokens,
+    model=None,
+    embedding_size=100,
+    batch_size=1024,
+    epochs=10,
+    neg_sample_num=25,
+    calc_acc=False,
+    device='cpu',
+    mode='train',
+    callback=None
+):
     if mode == 'train':
         if model is None:
             model = ASM2VEC(tokens.size(), function_size=len(functions), embedding_size=embedding_size).to(device)
@@ -61,7 +73,7 @@ def train(functions, tokens, model=None, embedding_size=100, batch_size=1024, ep
     loader = DataLoader(AsmDataset(*preprocess(functions, tokens)), batch_size=batch_size, shuffle=True)
     for epoch in range(epochs):
         start = time.time()
-        loss_sum, loss_count = 0.0, 0
+        loss_sum, loss_count, accs = 0.0, 0, []
 
         model.train()
         for i, (inp, pos) in enumerate(loader):
@@ -72,12 +84,20 @@ def train(functions, tokens, model=None, embedding_size=100, batch_size=1024, ep
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-        
-        if not quiet:
-            print(f'{epoch} | time = {time.time() - start:.2f}, loss = {loss_sum / loss_count:.4f}')
 
-        if mode == 'train':
-            save_model(path, model, tokens)
+            if calc_acc:
+                probs = model.predict(inp.to(device), pos.to(device))
+                accs.append(accuracy(pos, probs))
+
+        if callback:
+            callback({
+                'model': model,
+                'tokens': tokens,
+                'epoch': epoch,
+                'time': time.time() - start,
+                'loss': loss_sum / loss_count,
+                'accuracy': torch.tensor(accs).mean() if calc_acc else None
+            })
 
     return model
 
@@ -129,3 +149,7 @@ def show_probs(x, y, probs, tokens, limit=None, pretty=False):
                 colorbegin, colorclear = '', ''
             print(f'{V} {colorbegin}{value*100:05.2f}%{colorclear} {V} {colorbegin}{tokens[index.item()].name:31}{colorclear} {V}')
         print(BL + H * 8 + BM + H * 33 + BR)
+
+def accuracy(y, probs):
+    return torch.mean(torch.tensor([torch.sum(probs[i][yi]) for i, yi in enumerate(y)]))
+
