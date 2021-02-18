@@ -85,7 +85,7 @@ def train(
             loss.backward()
             optimizer.step()
 
-            if calc_acc:
+            if i == 0 and calc_acc:
                 probs = model.predict(inp.to(device), pos.to(device))
                 accs.append(accuracy(pos, probs))
 
