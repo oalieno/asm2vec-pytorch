@@ -44,6 +44,30 @@ Following is the benchmark of training 1000 functions in 1 epoch.
 | [oalieno/asm2vec-pytorch](https://github.com/oalieno/asm2vec-pytorch) (with CPU) | 9.11 |
 | [oalieno/asm2vec-pytorch](https://github.com/oalieno/asm2vec-pytorch) (with GPU) | 0.97 |
 
+## Get Started
+
+```bash
+python scripts/bin2asm.py -i /bin/ -o asm/
+```
+
+First generate asm files from binarys under `/bin/`.  
+You can hit `Ctrl+C` anytime when there is enough data.
+
+```bash
+python scripts/train.py -i asm/ -l 100 -o model.pt --epoch 100
+```
+
+Try to train the model using only 100 functions and 100 epochs for a taste.  
+Then you can use more data if you want.
+
+```bash
+python scripts/test.py -i asm/123456 -m model.pt
+```
+
+After you train your model, try to grab a assembly function and see the result.  
+This script will show you how the model perform.  
+Once you satisfied, you can take out the embedding vector of the function and do whatever you want with it.
+
 ## Usage
 
 ### bin2asm.py
