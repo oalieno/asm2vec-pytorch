@@ -1,4 +1,6 @@
 # asm2vec-pytorch
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Foalieno%2Fasm2vec-pytorch.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Foalieno%2Fasm2vec-pytorch?ref=badge_shield)
+
 
 <a><img alt="release 1.0.0" src="https://img.shields.io/badge/release-v1.0.0-yellow?style=for-the-badge"></a>
 <a><img alt="mit" src="https://img.shields.io/badge/license-MIT-brightgreen?style=for-the-badge"></a>
@@ -156,3 +158,7 @@ python test.py -i asm/123456 -m model.pt
 │ 03.55% │ r11d                            │
 └────────┴─────────────────────────────────┘
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Foalieno%2Fasm2vec-pytorch.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Foalieno%2Fasm2vec-pytorch?ref=badge_large)
