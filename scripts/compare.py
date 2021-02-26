@@ -13,7 +13,8 @@ def cosine_similarity(v1, v2):
 @click.option('-e', '--epochs', default=10, help='training epochs', show_default=True)
 @click.option('-c', '--device', default='auto', help='hardware device to be used: cpu / cuda / auto', show_default=True)
 @click.option('-q', '--quiet', help='do not print training process', is_flag=True)
-def cli(ipath1, ipath2, mpath, epochs, device, quiet):
+@click.option('-lr', '--learning-rate', 'lr', default=0.001, help="learning rate", show_default=True)
+def cli(ipath1, ipath2, mpath, epochs, device, quiet, lr):
     if device == 'auto':
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -25,7 +26,7 @@ def cli(ipath1, ipath2, mpath, epochs, device, quiet):
     model = model.to(device)
     
     # train function embedding
-    model = asm2vec.utils.train(functions, tokens, model=model, epochs=epochs, device=device, mode='test', quiet=quiet)
+    model = asm2vec.utils.train(functions, tokens, model=model, epochs=epochs, device=device, mode='test', learning_rate=lr)
 
     # compare 2 function vectors
     v1, v2 = model.to('cpu').embeddings_f(torch.tensor([0, 1]))

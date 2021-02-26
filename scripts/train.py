@@ -13,7 +13,8 @@ import asm2vec
 @click.option('-n', '--neg-sample-num', 'neg_sample_num', default=25, help='negative sampling amount', show_default=True)
 @click.option('-a', '--calculate-accuracy', 'calc_acc', help='whether calculate accuracy ( will be significantly slower )', is_flag=True)
 @click.option('-c', '--device', default='auto', help='hardware device to be used: cpu / cuda / auto', show_default=True)
-def cli(ipath, opath, mpath, limit, embedding_size, batch_size, epochs, neg_sample_num, calc_acc, device):
+@click.option('-lr', '--learning-rate', 'lr', default=0.001, help="learning rate", show_default=True)
+def cli(ipath, opath, mpath, limit, embedding_size, batch_size, epochs, neg_sample_num, calc_acc, device, lr):
     if device == 'auto':
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
@@ -43,7 +44,8 @@ def cli(ipath, opath, mpath, limit, embedding_size, batch_size, epochs, neg_samp
         neg_sample_num=neg_sample_num,
         calc_acc=calc_acc,
         device=device,
-        callback=callback
+        callback=callback,
+        learning_rate=lr
     )
 
 if __name__ == '__main__':
