@@ -64,7 +64,7 @@ Then you can use more data if you want.
 python scripts/test.py -i asm/123456 -m model.pt
 ```
 
-After you train your model, try to grab a assembly function and see the result.  
+After you train your model, try to grab an assembly function and see the result.  
 This script will show you how the model perform.  
 Once you satisfied, you can take out the embedding vector of the function and do whatever you want with it.
 
@@ -112,6 +112,7 @@ Options:
   -c, --device TEXT               hardware device to be used: cpu / cuda /
                                   auto  [default: auto]
 
+  -lr, --learning-rate FLOAT      learning rate  [default: 0.02]
   --help                          Show this message and exit.
 ```
 
@@ -134,6 +135,7 @@ Options:
   -c, --device TEXT             hardware device to be used: cpu / cuda / auto
                                 [default: auto]
 
+  -lr, --learning-rate FLOAT    learning rate  [default: 0.02]
   -p, --pretty                  pretty print table  [default: False]
   --help                        Show this message and exit.
 ```
@@ -155,4 +157,30 @@ python test.py -i asm/123456 -m model.pt
 │ 04.36% │ r14                             │
 │ 03.55% │ r11d                            │
 └────────┴─────────────────────────────────┘
+```
+
+### compare.py
+
+```
+Usage: compare.py [OPTIONS]
+
+Options:
+  -i1, --input1 TEXT          target function 1  [required]
+  -i2, --input2 TEXT          target function 2  [required]
+  -m, --model TEXT            model path  [required]
+  -e, --epochs INTEGER        training epochs  [default: 10]
+  -c, --device TEXT           hardware device to be used: cpu / cuda / auto
+                              [default: auto]
+
+  -lr, --learning-rate FLOAT  learning rate  [default: 0.02]
+  --help                      Show this message and exit.
+```
+
+```bash
+# Example
+python compare.py -i1 asm/123456 -i2 asm/654321 -m model.pt -e 30
+```
+
+```
+cosine similarity : 0.873684
 ```
