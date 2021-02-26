@@ -25,7 +25,15 @@ def cli(ipath1, ipath2, mpath, epochs, device, lr):
     model = model.to(device)
     
     # train function embedding
-    model = asm2vec.utils.train(functions, tokens, model=model, epochs=epochs, device=device, mode='test', learning_rate=lr)
+    model = asm2vec.utils.train(
+        functions,
+        tokens,
+        model=model,
+        epochs=epochs,
+        device=device,
+        mode='test',
+        learning_rate=lr
+    )
 
     # compare 2 function vectors
     v1, v2 = model.to('cpu').embeddings_f(torch.tensor([0, 1]))
