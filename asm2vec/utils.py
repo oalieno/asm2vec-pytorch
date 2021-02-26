@@ -58,7 +58,7 @@ def train(
     device='cpu',
     mode='train',
     callback=None,
-    learning_rate=0.001
+    learning_rate=0.02
 ):
     if mode == 'train':
         if model is None:
