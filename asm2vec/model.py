@@ -18,7 +18,7 @@ class ASM2VEC(nn.Module):
             self.embeddings = nn.Embedding(vocab_size_new, embedding_size, _weight=weight)
             weight_r = torch.cat([self.embeddings_r.weight, ((torch.rand(vocab_size_new - vocab_size, 2 * embedding_size)-0.5)/embedding_size/2).to(device)])
             self.embeddings_r = nn.Embedding(vocab_size_new, 2 * embedding_size, _weight=weight_r)
-        self.embeddings_f = nn.Embedding(function_size_new, 2 * embedding_size, _weight=(torch.rand(function_size_new, 2 * embedding_size)-0.5)/embedding_size/2)
+        self.embeddings_f = nn.Embedding(function_size_new, 2 * embedding_size, _weight=((torch.rand(function_size_new, 2 * embedding_size)-0.5)/embedding_size/2).to(device))
 
     def v(self, inp):
         e  = self.embeddings(inp[:,1:])
