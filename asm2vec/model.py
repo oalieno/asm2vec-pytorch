@@ -6,24 +6,20 @@ bce, sigmoid, softmax = nn.BCELoss(), nn.Sigmoid(), nn.Softmax(dim=1)
 class ASM2VEC(nn.Module):
     def __init__(self, vocab_size, function_size, embedding_size):
         super(ASM2VEC, self).__init__()
-        self.embeddings = nn.Embedding(vocab_size, embedding_size)
-        self.embeddings_f = nn.Embedding(function_size, 2 * embedding_size)
-        self.embeddings_r = nn.Embedding(vocab_size, 2 * embedding_size)
+        self.embeddings   = nn.Embedding(vocab_size, embedding_size, _weight=torch.zeros(vocab_size, embedding_size))
+        self.embeddings_f = nn.Embedding(function_size, 2 * embedding_size, _weight=(torch.rand(function_size, 2 * embedding_size)-0.5)/embedding_size/2)
+        self.embeddings_r = nn.Embedding(vocab_size, 2 * embedding_size, _weight=(torch.rand(vocab_size, 2 * embedding_size)-0.5)/embedding_size/2)
 
     def update(self, function_size_new, vocab_size_new):
         device = self.embeddings.weight.device
         vocab_size, function_size, embedding_size = self.embeddings.num_embeddings, self.embeddings_f.num_embeddings, self.embeddings.embedding_dim
         if vocab_size_new != vocab_size:
-            weight = torch.cat([self.embeddings.weight, torch.rand(vocab_size_new - vocab_size, embedding_size).to(device)])
+            weight = torch.cat([self.embeddings.weight, torch.zeros(vocab_size_new - vocab_size, embedding_size).to(device)])
             self.embeddings = nn.Embedding(vocab_size_new, embedding_size, _weight=weight)
-            weight_r = torch.cat([self.embeddings_r.weight, torch.rand(vocab_size_new - vocab_size, 2 * embedding_size).to(device)])
+            weight_r = torch.cat([self.embeddings_r.weight, ((torch.rand(vocab_size_new - vocab_size, 2 * embedding_size)-0.5)/embedding_size/2).to(device)])
             self.embeddings_r = nn.Embedding(vocab_size_new, 2 * embedding_size, _weight=weight_r)
         if function_size_new != function_size:
-            if function_size_new < function_size:
-                weight_f = self.embeddings_f.weight[:function_size_new]
-            else:
-                weight_f = torch.cat([self.embeddings_f.weight, torch.rand(function_size_new - function_size, 2 * embedding_size).to(device)])
-            self.embeddings_f = nn.Embedding(function_size_new, 2 * embedding_size, _weight=weight_f)
+            self.embeddings_f = nn.Embedding(function_size_new, 2 * embedding_size, _weight=(torch.rand(function_size_new, 2 * embedding_size)-0.5)/embedding_size/2)
 
     def v(self, inp):
         e  = self.embeddings(inp[:,1:])
