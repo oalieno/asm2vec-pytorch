@@ -57,16 +57,17 @@ def train(
     calc_acc=False,
     device='cpu',
     mode='train',
-    callback=None
+    callback=None,
+    learning_rate=0.001
 ):
     if mode == 'train':
         if model is None:
             model = ASM2VEC(tokens.size(), function_size=len(functions), embedding_size=embedding_size).to(device)
-        optimizer = torch.optim.Adam(model.parameters())
+        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     elif mode == 'test':
         if model is None:
             raise ValueError("test mode required pretrained model")
-        optimizer = torch.optim.Adam(model.embeddings_f.parameters())
+        optimizer = torch.optim.Adam(model.embeddings_f.parameters(), lr=learning_rate)
     else:
         raise ValueError("Unknown mode")
 
