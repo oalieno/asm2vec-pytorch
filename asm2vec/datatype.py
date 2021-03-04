@@ -66,10 +66,10 @@ class Tokens:
         return torch.multinomial(self.weights(), num * batch_size, replacement=True).view(batch_size, num)
 
 class Function:
-    def __init__(self, insts, blocks):
+    def __init__(self, insts, blocks, meta):
         self.insts = insts
         self.blocks = blocks
-        self.meta = {}
+        self.meta = meta
     @classmethod
     def load(cls, text):
         '''
@@ -108,7 +108,7 @@ class Function:
             for i, arg in enumerate(inst.args):
                 if labels.get(arg):
                     inst.args[i] = 'CONST'
-        return cls(insts, blocks)
+        return cls(insts, blocks, meta)
     def tokens(self):
         return [token for inst in self.insts for token in inst.tokens()]
     def random_walk(self, num=3):
