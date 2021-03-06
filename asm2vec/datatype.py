@@ -153,9 +153,6 @@ class Instruction:
     def tokens(self):
         return [self.op] + self.args
     def is_jmp(self):
-        if 'jmp' in self.op or self.op[0] == 'j':
-            return True
-        else:
-            return False
+        return 'jmp' in self.op or self.op[0] == 'j'
     def is_call(self):
         return self.op == 'call'
