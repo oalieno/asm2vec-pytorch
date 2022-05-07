@@ -118,7 +118,7 @@ Options:
 
 ```bash
 # Example
-python train.py -i asm/ -o model.pt --epoch 100
+python train.py -i asm/ -o model.pt --epochs 100
 ```
 
 ### test.py
