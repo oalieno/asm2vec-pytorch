@@ -19,24 +19,27 @@ def cli(ipath, opath, mpath, limit, embedding_size, batch_size, epochs, neg_samp
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
     if mpath:
-        model, tokens = asm2vec.utils.load_model(mpath, device=device)
+        model, tokens, fn_mapper = asm2vec.utils.load_model(mpath, device=device)
         functions, tokens_new = asm2vec.utils.load_data(ipath, limit=limit)
         tokens.update(tokens_new)
+        fn_mapper.update(functions)
         model.update(len(functions), tokens.size())
     else:
         model = None
         functions, tokens = asm2vec.utils.load_data(ipath, limit=limit)
+        fn_mapper = asm2vec.datatype.FunctionMapper(functions)
 
     def callback(context):
         progress = f'{context["epoch"]} | time = {context["time"]:.2f}, loss = {context["loss"]:.4f}'
         if context["accuracy"]:
             progress += f', accuracy = {context["accuracy"]:.4f}'
         print(progress)
-        asm2vec.utils.save_model(opath, context["model"], context["tokens"])
+        asm2vec.utils.save_model(opath, context["model"], context["tokens"], context['fn_mapper'])
 
     model = asm2vec.utils.train(
         functions,
         tokens,
+        fn_mapper,
         model=model,
         embedding_size=embedding_size,
         batch_size=batch_size,
