@@ -54,7 +54,7 @@ First generate asm files from binarys under `/bin/`.
 You can hit `Ctrl+C` anytime when there is enough data.
 
 ```bash
-python scripts/train.py -i asm/ -l 100 -o model.pt --epoch 100
+python scripts/train.py -i asm/ -l 100 -o model.pt --epochs 100
 ```
 
 Try to train the model using only 100 functions and 100 epochs for a taste.  
@@ -118,7 +118,7 @@ Options:
 
 ```bash
 # Example
-python train.py -i asm/ -o model.pt --epoch 100
+python train.py -i asm/ -o model.pt --epochs 100
 ```
 
 ### test.py
