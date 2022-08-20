@@ -3,7 +3,7 @@ import time
 import torch
 from torch.utils.data import DataLoader, Dataset
 from pathlib import Path
-from .datatype import Tokens, Function, Instruction
+from .datatype import Tokens, Function, Instruction, FunctionMapper
 from .model import ASM2VEC
 
 class AsmDataset(Dataset):
@@ -32,6 +32,7 @@ def load_data(paths, limit=None):
             break
         with open(filename) as f:
             fn = Function.load(f.read())
+            #print(f'function {fn.meta["name"]} at file -> {fn.meta["file"]}')
             functions.append(fn)
             tokens.add(fn.tokens())
     
@@ -42,13 +43,16 @@ def preprocess(functions, tokens):
     for i, fn in enumerate(functions):
         for seq in fn.random_walk():
             for j in range(1, len(seq) - 1):
+                #print(f"[+] preprocess : fn {i}, metadata = {fn.meta}, seq : {[i] + seq[j].tokens()}")
                 x.append([i] + [tokens[token].index for token in seq[j-1].tokens() + seq[j+1].tokens()])
                 y.append([tokens[token].index for token in seq[j].tokens()])
+    print(torch.tensor(x)[:, 0])
     return torch.tensor(x), torch.tensor(y)
 
 def train(
     functions,
     tokens,
+    fn_mapper,
     model=None,
     embedding_size=100,
     batch_size=1024,
@@ -94,6 +98,7 @@ def train(
             callback({
                 'model': model,
                 'tokens': tokens,
+                'fn_mapper': fn_mapper,
                 'epoch': epoch,
                 'time': time.time() - start,
                 'loss': loss_sum / loss_count,
@@ -102,7 +107,7 @@ def train(
 
     return model
 
-def save_model(path, model, tokens):
+def save_model(path, model, tokens, fn_mapper):
     torch.save({
         'model_params': (
             model.embeddings.num_embeddings,
@@ -111,16 +116,19 @@ def save_model(path, model, tokens):
         ),
         'model': model.state_dict(),
         'tokens': tokens.state_dict(),
+        'function_mapper': fn_mapper.state_dict()
     }, path)
 
 def load_model(path, device='cpu'):
     checkpoint = torch.load(path, map_location=device)
     tokens = Tokens()
     tokens.load_state_dict(checkpoint['tokens'])
+    fn_mapper = FunctionMapper()
+    fn_mapper.load_state_dict(checkpoint['function_mapper'])
     model = ASM2VEC(*checkpoint['model_params'])
     model.load_state_dict(checkpoint['model'])
     model = model.to(device)
-    return model, tokens
+    return model, tokens, fn_mapper
 
 def show_probs(x, y, probs, tokens, limit=None, pretty=False):
     if pretty:

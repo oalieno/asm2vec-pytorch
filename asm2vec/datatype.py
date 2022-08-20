@@ -10,6 +10,39 @@ class Token:
     def __str__(self):
         return self.name
 
+class FunctionMapper:
+    def __init__(self, functions=[]):
+        self.size = 0
+        self.map = {}
+        for fn in functions:
+            self.map[self.size] = {'name': fn.meta['name'], 'binary': fn.meta['file']}
+            self.size += 1
+    def add_fn(self):
+        self.map[self.size] = {'name': fn.meta['name'], 'binary': fn.meta['file']}
+        self.size += 1
+    def load_state_dict(self, sd):
+        self.size = sd['size']
+        self.map = sd['map_embds_to_fn']
+    def state_dict(self):
+        return {'size': self.size, 'map_embds_to_fn' : self.map}
+    def update(self, functions):
+        for fn in functions:
+            self.map[self.size] = {'name': fn.meta['name'], 'binary': fn.meta['file']}
+            self.size += 1
+
+class Binary:
+    def __init__(self, name, hash_code):
+        self.name = name
+        self.hash_code = hash_code
+        self.functions = []
+    def add_function(fn):
+        self.functions.append(fn)
+    def load_state_dict(self, sd):
+        self.name = sd['name']
+        self.functions = sd['functions']
+    def state_dict(self):
+        return {'name': self.name, 'functions': self.functions}
+
 class Tokens:
     def __init__(self, name_to_index=None, tokens=None):
         self.name_to_index = name_to_index or {}

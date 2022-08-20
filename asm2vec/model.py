@@ -39,5 +39,6 @@ class ASM2VEC(nn.Module):
     def predict(self, inp, pos):
         device, batch_size = inp.device, inp.shape[0]
         v = self.v(inp)
+        print(v)
         probs = torch.bmm(self.embeddings_r(torch.arange(self.embeddings_r.num_embeddings).repeat(batch_size, 1).to(device)), v).squeeze(dim=2)
         return softmax(probs)
