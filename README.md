@@ -24,6 +24,7 @@ If you only want to use the library code, you just need to install `torch`
 ## Install
 
 ```
+pip install -r requirements.txt 
 python setup.py install
 ```
 
