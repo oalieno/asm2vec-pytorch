@@ -9,7 +9,7 @@ The details of the model can be found in the original paper: [(sp'19) Asm2Vec: B
 
 ## Requirements
 
-python >= 3.6
+python >= 3.10
 
 | packages | for |
 | --- | --- |
