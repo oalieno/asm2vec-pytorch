@@ -3,17 +3,21 @@ import time
 import torch
 from torch.utils.data import DataLoader, Dataset
 from pathlib import Path
-from .datatype import Tokens, Function, Instruction
-from .model import ASM2VEC
+from asm2vec.datatype import Tokens, Function, Instruction
+from asm2vec.model import ASM2VEC
+
 
 class AsmDataset(Dataset):
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
     def __len__(self):
         return len(self.x)
+
     def __getitem__(self, index):
         return self.x[index], self.y[index]
+
 
 def load_data(paths, limit=None):
     if type(paths) is not list:
@@ -22,7 +26,8 @@ def load_data(paths, limit=None):
     filenames = []
     for path in paths:
         if os.path.isdir(path):
-            filenames += [Path(path) / filename for filename in sorted(os.listdir(path)) if os.path.isfile(Path(path) / filename)]
+            filenames += [Path(path) / filename for filename in sorted(os.listdir(path))
+                          if os.path.isfile(Path(path) / filename)]
         else:
             filenames += [Path(path)]
     
@@ -37,6 +42,7 @@ def load_data(paths, limit=None):
     
     return functions, tokens
 
+
 def preprocess(functions, tokens):
     x, y = [], []
     for i, fn in enumerate(functions):
@@ -45,6 +51,7 @@ def preprocess(functions, tokens):
                 x.append([i] + [tokens[token].index for token in seq[j-1].tokens() + seq[j+1].tokens()])
                 y.append([tokens[token].index for token in seq[j].tokens()])
     return torch.tensor(x), torch.tensor(y)
+
 
 def train(
     functions,
@@ -102,6 +109,7 @@ def train(
 
     return model
 
+
 def save_model(path, model, tokens):
     torch.save({
         'model_params': (
@@ -113,6 +121,7 @@ def save_model(path, model, tokens):
         'tokens': tokens.state_dict(),
     }, path)
 
+
 def load_model(path, device='cpu'):
     checkpoint = torch.load(path, map_location=device)
     tokens = Tokens()
@@ -122,35 +131,37 @@ def load_model(path, device='cpu'):
     model = model.to(device)
     return model, tokens
 
+
 def show_probs(x, y, probs, tokens, limit=None, pretty=False):
     if pretty:
-        TL, TR, BL, BR = '┌', '┐', '└', '┘'
-        LM, RM, TM, BM = '├', '┤', '┬', '┴'
-        H, V = '─', '│'
+        tl, tr, bl, br = '┌', '┐', '└', '┘'
+        lm, rm, tm, bm = '├', '┤', '┬', '┴'
+        h, v = '─', '│'
         arrow = ' ➔'
     else:
-        TL = TR = BL = BR = '+'
-        LM = RM = TM = BM = '+'
-        H, V = '-', '|'
+        tl, tr, bl, br = '+', '+', '+', '+'
+        lm, rm, tm, bm = '+', '+', '+', '+'
+        h, v = '-', '|'
         arrow = '->'
     top = probs.topk(5)
     for i, (xi, yi) in enumerate(zip(x, y)):
         if limit and i >= limit:
             break
         xi, yi = xi.tolist(), yi.tolist()
-        print(TL + H * 42 + TR)
-        print(f'{V}    {str(Instruction(tokens[xi[1]], tokens[xi[2:4]])):37} {V}')
-        print(f'{V} {arrow} {str(Instruction(tokens[yi[0]], tokens[yi[1:3]])):37} {V}')
-        print(f'{V}    {str(Instruction(tokens[xi[4]], tokens[xi[5:7]])):37} {V}')
-        print(LM + H * 8 + TM + H * 33 + RM)
+        print(tl + h * 42 + tr)
+        print(f'{v}    {str(Instruction(tokens[xi[1]], tokens[xi[2:4]])):37} {v}')
+        print(f'{v} {arrow} {str(Instruction(tokens[yi[0]], tokens[yi[1:3]])):37} {v}')
+        print(f'{v}    {str(Instruction(tokens[xi[4]], tokens[xi[5:7]])):37} {v}')
+        print(lm + h * 8 + tm + h * 33 + rm)
         for value, index in zip(top.values[i], top.indices[i]):
             if index in yi:
                 colorbegin, colorclear = '\033[92m', '\033[0m'
             else:
                 colorbegin, colorclear = '', ''
-            print(f'{V} {colorbegin}{value*100:05.2f}%{colorclear} {V} {colorbegin}{tokens[index.item()].name:31}{colorclear} {V}')
-        print(BL + H * 8 + BM + H * 33 + BR)
+            print(f'{v} {colorbegin}{value*100:05.2f}%{colorclear} {v} {colorbegin}'
+                  f'{tokens[index.item()].name:31}{colorclear} {v}')
+        print(bl + h * 8 + bm + h * 33 + br)
+
 
 def accuracy(y, probs):
     return torch.mean(torch.tensor([torch.sum(probs[i][yi]) for i, yi in enumerate(y)]))
-
