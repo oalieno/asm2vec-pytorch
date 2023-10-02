@@ -3,8 +3,8 @@ import time
 import torch
 from torch.utils.data import DataLoader, Dataset
 from pathlib import Path
-from datatype import Tokens, Function, Instruction
-from model import ASM2VEC
+from asm2vec.datatype import Tokens, Function, Instruction
+from asm2vec.model import ASM2VEC
 
 
 class AsmDataset(Dataset):
