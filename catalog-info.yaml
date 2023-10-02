@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: asm2vec-pytorch
+  description: All code running ASM2VEC using PyTorch
+  labels:
+    - jira-key: DATASCI
+    - language: Python
+  annotations:
+    backstage.io/source-location: url:https://github.com/wandera/asm2vec-pytorch
+spec:
+  type: service
+  lifecycle: production
+  owner: datascience
+  system: datascience
