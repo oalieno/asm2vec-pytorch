@@ -23,7 +23,7 @@ def calc_tensors(asm_path, tensor_path, model_path, epochs, device='cpu', lr=0.0
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     if os.path.isfile(model_path):
-        model, tokens = asm2vec.utils.load_model(model_path, device=device)
+        model, tokens = utils.load_model(model_path, device=device)
     else:
         print("No valid model")
         return []
