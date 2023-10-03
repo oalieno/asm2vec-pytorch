@@ -13,12 +13,13 @@ def _sha3(asm: str) -> str:
     return hashlib.sha3_256(asm.encode()).hexdigest()
 
 
-def _valid_exe(filename: str) -> bool:
+def _valid_exe(filename: str, magic_bytes) -> bool:
     """Extracts magic bytes and returns the header
     :param filename: name of the malware file (SHA1)
+    :param magic_bytes for the specific OS/type of binary
     :return: Boolean of the header existing in magic bytes
     """
-    magics = [bytes.fromhex('cffaedfe')]
+    magics = [bytes.fromhex(magic_bytes)]
     with open(filename, 'rb') as f:
         header = f.read(4)
         return header in magics
@@ -67,14 +68,15 @@ def _fn_to_asm(pdf: dict | None, asm_minlen: int) -> str:
     return output
 
 
-def bin_to_asm(filename: Path, output_path: Path, asm_minlen: int) -> int:
+def bin_to_asm(filename: Path, output_path: Path, asm_minlen: int, magic_bytes) -> int:
     """Fragments the input binary into assembly functions via r2pipe
     :param filename: name of the malware file  (SHA1)
     :param output_path: path to the folder to store the assembly functions for each malware
     :param asm_minlen: the minimum length of assembly functions to be extracted
+    :param magic_bytes for the specific OS/type of binary
     :return: the number of assembly functions
     """
-    if not _valid_exe(filename):
+    if not _valid_exe(filename, magic_bytes):
         logging.info('The input file is invalid.')
         return 0
 
@@ -98,7 +100,7 @@ def bin_to_asm(filename: Path, output_path: Path, asm_minlen: int) -> int:
     return count
 
 
-def convert_to_asm(input_path, output_path, minlen_upper: int, minlen_lower: int) -> list:
+def convert_to_asm(input_path, output_path, minlen_upper: int, minlen_lower: int, magic_bytes='cffaedfe') -> list:
     """ Extracts assembly functions from malware files and saves them
     into separate folder per binary
     :param input_path: the path to the malware binaries
@@ -106,6 +108,7 @@ def convert_to_asm(input_path, output_path, minlen_upper: int, minlen_lower: int
     :param minlen_upper: The minimum number of assembly functions needed for disassembling
     :param minlen_lower: If disassembling not possible with with minlen_upper, lower the minimum number
     of assembly functions to minlen_lower
+    :param magic_bytes for the specific OS/type of binary
     :return: List of sha1 of disassembled malware files
     """
 
@@ -123,9 +126,9 @@ def convert_to_asm(input_path, output_path, minlen_upper: int, minlen_lower: int
             out_dir = os.path.join(asm_dir, entry.name)
             if not (os.path.exists(out_dir)):
                 os.mkdir(out_dir)
-            function_count += bin_to_asm(Path(entry), Path(out_dir), minlen_upper)
+            function_count += bin_to_asm(Path(entry), Path(out_dir), minlen_upper, magic_bytes)
             if function_count == 0:
-                function_count += bin_to_asm(Path(entry), Path(out_dir), minlen_lower)
+                function_count += bin_to_asm(Path(entry), Path(out_dir), minlen_lower, magic_bytes)
                 if function_count == 0:
                     os.rmdir(out_dir)
                     logging.info('The binary {} was not disassembled'.format(entry.name))
