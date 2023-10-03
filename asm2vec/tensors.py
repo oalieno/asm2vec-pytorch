@@ -1,7 +1,7 @@
 import os
 import torch
 import logging
-from asm2vec import utils
+from asm2vec.train import train, load_model, load_data
 from pathlib import Path
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -27,7 +27,7 @@ def calc_tensors(asm_path: str,
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     if os.path.isfile(model_path):
-        model, tokens = utils.load_model(model_path, device=device)
+        model, tokens = load_model(model_path, device=device)
     else:
         print("No valid model")
         return []
@@ -42,21 +42,21 @@ def calc_tensors(asm_path: str,
             if entry.is_dir() and os.listdir(entry) and entry.name:
                 tensor_file = os.path.join(dir0, entry.name)
                 if not (os.path.exists(tensor_file)):
-                    functions, tokens_new = utils.load_data([entry])
+                    functions, tokens_new = load_data([entry])
                     file_count = sum(len(files) for _, _, files in os.walk(entry))
                     tokens.update(tokens_new)
                     logging.info(f"Binary {entry.name}: {file_count} assembly functions")
                     model.update(file_count, tokens.size())
                     model = model.to(device)
 
-                    model = utils.train(
+                    model = train(
                         functions,
                         tokens,
                         model=model,
                         epochs=epochs,
                         device=device,
                         mode='test',
-                        learning_rate=lr
+                        learning_rate=learning_rate
                     )
 
                     tensor = model.to('cpu').embeddings_f(torch.tensor([list(range(0, file_count))]))
