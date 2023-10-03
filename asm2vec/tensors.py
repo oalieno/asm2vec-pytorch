@@ -1,14 +1,18 @@
 import os
 import torch
 import logging
-import asm2vec
 from asm2vec import utils
 from pathlib import Path
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
-def calc_tensors(asm_path, tensor_path, model_path, epochs, device='cpu', lr=0.02) -> list:
+def calc_tensors(asm_path: str,
+                 tensor_path: str,
+                 model_path: str,
+                 epochs: int,
+                 device: str = 'cpu',
+                 learning_rate: float = 0.02) -> list:
     """Calculates vector representation of a binary as the mean per column
     of the vector representations of its assembly functions
     :param asm_path: folder with assembly function in a subfolder per binary
@@ -16,7 +20,7 @@ def calc_tensors(asm_path, tensor_path, model_path, epochs, device='cpu', lr=0.0
     :param model_path: path to the trained model
     :param epochs: number of epochs
     :param device:  'auto' | 'cuda' | 'cpu'
-    :param lr: learning rate
+    :param learning_rate: learning rate
     """
     tensors_list = []
     if device == 'auto':
@@ -38,14 +42,14 @@ def calc_tensors(asm_path, tensor_path, model_path, epochs, device='cpu', lr=0.0
             if entry.is_dir() and os.listdir(entry) and entry.name:
                 tensor_file = os.path.join(dir0, entry.name)
                 if not (os.path.exists(tensor_file)):
-                    functions, tokens_new = asm2vec.utils.load_data([entry])
+                    functions, tokens_new = utils.load_data([entry])
                     file_count = sum(len(files) for _, _, files in os.walk(entry))
                     tokens.update(tokens_new)
                     logging.info(f"Binary {entry.name}: {file_count} assembly functions")
                     model.update(file_count, tokens.size())
                     model = model.to(device)
 
-                    model = asm2vec.utils.train(
+                    model = utils.train(
                         functions,
                         tokens,
                         model=model,
