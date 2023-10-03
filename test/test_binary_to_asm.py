@@ -121,7 +121,7 @@ class TestBinaryToAsm(TestCase):
         self.assertEqual(_fn_to_asm(self.pdf_dict, asm_min), expected_asm)
 
     def test_bin_to_asm_returns_expected_number_of_disassembled_files(self):
-        binary_location = "malware/5cca32eb8f9c2a024a57ce12e3fb66070662de80"
+        binary_location = "malware_bin/5cca32eb8f9c2a024a57ce12e3fb66070662de80"
         asm_minlen = 5
         magic_bytes = ['cffaedfe']
         self.assertEqual(bin_to_asm(Path(binary_location), Path(self.output_path), asm_minlen, magic_bytes), 1)
