@@ -3,6 +3,7 @@ import asm2vec
 import logging
 from pathlib import Path
 from asm2vec import utils
+from asm2vec.model import ASM2VEC
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
@@ -24,13 +25,13 @@ def train_asm2vec_model(
         model_path: str | None,
         limit: int,
         epochs: int,
-        calc_acc: False,
-        embedding_size=100,
-        batch_size=1024,
-        neg_sample=25,
-        lr=0.02,
-        device='cpu',
-) -> None:
+        calc_acc: bool = False,
+        embedding_size: int = 100,
+        batch_size: int = 1024,
+        neg_sample: int = 25,
+        learning_rate: float = 0.02,
+        device: str = 'cpu'
+) -> ASM2VEC:
     """Trains an asm2vec model
     :param train_set: path to the training dataset
     :param new_model: path to the model to be trained
@@ -44,22 +45,22 @@ def train_asm2vec_model(
     :param batch_size: the size of batches for training
     :param neg_sample: negative sampling amount
     :param device: 'auto' | 'cuda' | 'cpu'
-    :param lr: learning rate
+    :param learning_rate: learning rate
     """
 
     if device == 'auto':
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     if model_path:
-        model, tokens = asm2vec.utils.load_model(model_path, device=device)
-        functions, tokens_new = asm2vec.utils.load_data(train_set, limit=limit)
+        model, tokens = utils.load_model(model_path, device=device)
+        functions, tokens_new = utils.load_data(train_set, limit=limit)
         tokens.update(tokens_new)
         model.update(len(functions), tokens.size())
     else:
         model = None
-        functions, tokens = asm2vec.utils.load_data(Path(train_set), limit=limit)
+        functions, tokens = utils.load_data(Path(train_set), limit=limit)
 
-    model = asm2vec.utils.train(
+    model = utils.train(
         functions,
         tokens,
         model=model,
@@ -70,8 +71,8 @@ def train_asm2vec_model(
         calc_acc=calc_acc,
         device=device,
         callback=callback,
-        learning_rate=lr
+        learning_rate=learning_rate
     )
-    asm2vec.utils.save_model(new_model, model, tokens)
+    utils.save_model(new_model, model, tokens)
 
-    return None
+    return model
