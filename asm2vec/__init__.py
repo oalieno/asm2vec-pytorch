@@ -1,1 +1,1 @@
-__all__ = ["datatype", "model", "utils", "binary_to_asm", "train", "tensors", "version"]
+__all__ = ["datatype", "model", "binary_to_asm", "train", "tensors", "version"]
