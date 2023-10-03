@@ -118,11 +118,13 @@ def convert_to_asm(input_path: str,
     :param magic_bytes: list of valid for the specific OS/type of binary; e.g.
     'cffaedfe' for Mach-O Little Endian (64-bit)
     'feedfacf' for Mach-O Big Endian (64-bit)
+    'cefaedfe' for Mach-O Little Endian (32-bit)
+    'feedface': Mach-O Big Endian (32-bit)
     'cafebabe'  Universal Binary Big Endian
     :return: List of sha1 of disassembled malware files
     """
     if not magic_bytes:
-        magic_bytes = ['cffaedfe', 'feedfacf', 'cafebabe']
+        magic_bytes = ['cffaedfe', 'feedfacf', 'cafebabe', 'cefaedfe', 'feedface']
 
     binary_dir = Path(input_path)
     asm_dir = Path(output_path)
