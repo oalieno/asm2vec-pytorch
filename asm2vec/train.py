@@ -1,5 +1,4 @@
 import torch
-import asm2vec
 import logging
 from pathlib import Path
 from asm2vec import utils
