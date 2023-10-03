@@ -5,6 +5,8 @@ import r2pipe
 import logging
 from pathlib import Path
 
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+
 
 def _sha3(asm: str) -> str:
     """Produces SHA3 for each assembly function
