@@ -10,13 +10,18 @@ class install(_install):
     @staticmethod
     def _setup_radare2() -> None:
         if sys.platform.startswith("linux"):
-            os.system("apt-get update")
-            os.system("apt-get install -y --no-install-recommends wget")
-            os.system(f"wget -O /tmp/radare2_${radare2_version}_arm64.deb https://github.com/radareorg/radare2/releases/download/${radare2_version}/radare2_${radare2_version}_arm64.deb")
-            os.system(f"dpkg -i /tmp/radare2_${radare2_version}_arm64.deb")
-            os.system("r2pm init")
-            os.system("r2pm update")
-            os.system(f"rm /tmp/radare2_${radare2_version}_arm64.deb")
+            commands = [
+                "apt-get update",
+                "apt-get install -y --no-install-recommends wget",
+                f"wget -O /tmp/radare2_{radare2_version}_arm64.deb https://github.com/radareorg/radare2/releases/download/{radare2_version}/radare2_{radare2_version}_arm64.deb",
+                f"dpkg -i /tmp/radare2_{radare2_version}_arm64.deb",
+                "r2pm init",
+                "r2pm update",
+                f"rm /tmp/radare2_{radare2_version}_arm64.deb"
+            ]
+            for command in commands:
+                if os.system(command) != 0:
+                    raise Exception(f"Install radare2 failed: '{command}'")
         elif sys.platform.startswith("darwin"):
             os.system("brew install radare2")
         else:
@@ -25,7 +30,6 @@ class install(_install):
     def run(self):
         self._setup_radare2()
         _install.run(self)
-
 
 
 def readme():
