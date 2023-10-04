@@ -1,4 +1,5 @@
 import os
+import sys
 from setuptools import setup, find_packages
 from setuptools.command.install import install as _install
 
@@ -8,12 +9,12 @@ from asm2vec.version import VERSION
 class install(_install):
     @staticmethod
     def _setup_radare2() -> None:
-        if os.system('r2env shell "r2 -v"') == 0:
-            print("radar2 already set up!")
-            return
-        os.system("r2env init")
-        os.system("r2env add radare2")
-        os.system("r2env use radare2@git")
+        if sys.platform.startswith("linux"):
+            os.system("apt-get install radare2")
+        elif sys.platform.startswith("darwin"):
+            os.system("brew install radare2")
+        else:
+            print("Ensure 'radar2' is installed...")
 
     def run(self):
         _install.run(self)
