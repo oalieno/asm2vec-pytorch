@@ -2,6 +2,8 @@ import torch
 import random
 import warnings
 
+# TODO - doc strings
+
 
 class Token:
     def __init__(self, name, index):

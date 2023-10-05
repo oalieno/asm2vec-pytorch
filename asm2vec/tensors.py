@@ -1,26 +1,26 @@
 import os
 import torch
 import logging
-from asm2vec.train import train, load_model, load_data
 from pathlib import Path
+
+from asm2vec.train import train, load_model, load_data
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
-def calc_tensors(asm_path: str,
-                 tensor_path: str,
-                 model_path: str,
-                 epochs: int,
-                 device: str = 'cpu',
-                 learning_rate: float = 0.02) -> list:
-    """Calculates vector representation of a binary as the mean per column
-    of the vector representations of its assembly functions
-    :param asm_path: folder with assembly function in a subfolder per binary
-    :param tensor_path: folder to store the tensors
-    :param model_path: path to the trained model
-    :param epochs: number of epochs
-    :param device:  'auto' | 'cuda' | 'cpu'
-    :param learning_rate: learning rate
+def calc_tensors(
+        asm_path: str, tensor_path: str, model_path: str, epochs: int, device: str = 'cpu', learning_rate: float = 0.02
+) -> list:
+    """
+    Calculates vector representation of a binary as the mean per column of the vector representations of its assembly
+    functions.
+    :param asm_path: Path to folder with assembly function in a sub-folder per binary
+    :param tensor_path: Path to folder to store the tensors
+    :param model_path: Path to the trained model
+    :param epochs: Number of epochs
+    :param device: 'auto' | 'cuda' | 'cpu'
+    :param learning_rate: Learning rate
+    :return: List of tensors
     """
     tensors_list = []
     if device == 'auto':
