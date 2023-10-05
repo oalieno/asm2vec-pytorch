@@ -1,7 +1,12 @@
 import torch
 import torch.nn as nn
 
+from asm2vec.datatype import Tokens
+
 bce, sigmoid, softmax = nn.BCELoss(), nn.Sigmoid(), nn.Softmax(dim=1)
+
+
+# TODO - doc strings
 
 
 class ASM2VEC(nn.Module):
@@ -44,9 +49,34 @@ class ASM2VEC(nn.Module):
         label = torch.cat([torch.ones(batch_size, 3), torch.zeros(batch_size, neg.shape[1])], dim=1).to(device)
         return bce(sigmoid(pred), label)
 
-    def predict(self, inp, pos):
+    def predict(self, inp, pos):  # Why is pos not used? Why does Predict differ so much from Forward?
         device, batch_size = inp.device, inp.shape[0]
         v = self.v(inp)
         probs = torch.bmm(self.embeddings_r(torch.arange(self.embeddings_r.num_embeddings).repeat(batch_size, 1).
                                             to(device)), v).squeeze(dim=2)
         return softmax(probs)
+
+
+def save_model(path: str, model: ASM2VEC, tokens: Tokens) -> None:
+    torch.save(
+        {
+            'model_params': (
+                model.embeddings.num_embeddings,
+                model.embeddings_f.num_embeddings,
+                model.embeddings.embedding_dim
+            ),
+            'model': model.state_dict(),
+            'tokens': tokens.state_dict(),
+        },
+        path
+    )
+
+
+def load_model(path: str, device: str = 'cpu') -> tuple[ASM2VEC, Tokens]:
+    checkpoint = torch.load(path, map_location=device)
+    tokens = Tokens()
+    tokens.load_state_dict(checkpoint['tokens'])
+    model = ASM2VEC(*checkpoint['model_params'])
+    model.load_state_dict(checkpoint['model'])
+    model = model.to(device)
+    return model, tokens
