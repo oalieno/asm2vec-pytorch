@@ -29,7 +29,7 @@ def test_model(
         epochs=epochs,
         neg_sample_num=neg_sample_num,
         device=device,
-        mode="test",
+        mode="update",
         learning_rate=learning_rate
     )
 
