@@ -55,7 +55,7 @@ def calc_tensors(
                         model=model,
                         epochs=epochs,
                         device=device,
-                        mode='test',
+                        mode='update',
                         learning_rate=learning_rate
                     )
 
