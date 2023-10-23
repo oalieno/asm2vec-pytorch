@@ -2,7 +2,6 @@ import time
 import torch
 from pathlib import Path
 from torch.utils.data import DataLoader
-
 from asm2vec.data import AsmDataset, load_data
 from asm2vec.datatype import Function, Tokens
 from asm2vec.model import ASM2VEC, load_model, save_model
@@ -24,15 +23,28 @@ def train(
         batch_size: int = 1024, epochs: int = 10, neg_sample_num: int = 25, calc_acc: bool = False, device: str = 'cpu',
         mode: str = 'train', verbose: bool = False, learning_rate: float = 0.02
 ):
-    # TODO: doc string
-    # TODO: test mode in train... this is confusing!
+    """This function trains a model on the given assembly functions and tokens
+    :param functions: list of assembly functions
+    :param tokens: tokens (operations, operands) of the assembly function
+    :param model: type of the model; ; (Optional, default ASM2VEC)
+    :param embedding_size: size of the tensor representation of an assembly function; (Optional, default value = 100)
+    :param batch_size: size of the batch for each epoch of training; (Optional, default value = 1024)
+    :param epochs: number of epochs for training the model; (Optional, default value = 10)
+    :param neg_sample_num: size of the negative sample; (Optional, default value = 25)
+    :param calc_acc: if set to True, the accuracy per training epoch is displayed; (Optional, default False)
+    :param device: the device used for processing; (Optional, default 'cpu')
+    :param mode: 'train' (to train a new model) | 'update' (to add to an already trained  model's dictionary);
+    (Optional, default 'train')
+    :param verbose: if True performs training in verbose mode; (Optional, default False)
+    :param learning_rate: learning rate
+    """
     if mode == 'train':
         if model is None:
             model = ASM2VEC(tokens.size(), function_size=len(functions), embedding_size=embedding_size).to(device)
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-    elif mode == 'test':
+    elif mode == 'update':
         if model is None:
-            raise ValueError("test mode required pretrained model")
+            raise ValueError("Update mode requires a pretrained model")
         optimizer = torch.optim.Adam(model.embeddings_f.parameters(), lr=learning_rate)
     else:
         raise ValueError("Unknown mode")
@@ -89,6 +101,7 @@ def train_asm2vec_model(
     :param neg_sample: negative sampling amount
     :param device: 'auto' | 'cuda' | 'cpu'
     :param learning_rate: learning rate
+    :return an ASM2VEC model
     """
 
     if device == 'auto':
