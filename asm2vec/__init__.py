@@ -1,6 +1,9 @@
-import importlib
+import os
 
-__all__ = ['model', 'datatype', 'utils']
+__home__ = os.path.dirname(os.path.abspath(__path__[0]))
+__data__ = os.path.join(__home__, "data")
 
-for module in __all__:
-    importlib.import_module(f'.{module}', 'asm2vec')
+__all__ = [
+    "__data__", "__home__", "binary_to_asm", "data", "datatype", "model", "similarity", "tensors", "test", "train",
+    "utilities", "version"
+]
