@@ -121,15 +121,16 @@ def convert_to_asm(
     :param minlen_lower: If disassembling is not possible with minlen_upper, lower the minimum number of assembly
         functions to minlen_lower (WHAT?)
     :param magic_bytes: List of valid for the specific OS/type of binary, e.g.
-        - 'cffaedfe' for Mach-O Little Endian (64-bit)
-        - 'feedfacf' for Mach-O Big Endian (64-bit)
-        - 'cefaedfe' for Mach-O Little Endian (32-bit)
+        - 'cffaedfe': for Mach-O Little Endian (64-bit)
+        - 'feedfacf': for Mach-O Big Endian (64-bit)
+        - 'cefaedfe': for Mach-O Little Endian (32-bit)
         - 'feedface': Mach-O Big Endian (32-bit)
-        - 'cafebabe'  Universal Binary Big Endian
+        - 'cafebabe':  Universal Binary Big Endian
+        - 'bebafeca'
     :return: List of sha1 of disassembled malware files
     """
     if not magic_bytes:
-        magic_bytes = ['cffaedfe', 'feedfacf', 'cafebabe', 'cefaedfe', 'feedface']
+        magic_bytes = ['cffaedfe', 'feedfacf', 'cafebabe', 'cefaedfe', 'feedface', 'bebafeca']
 
     binary_dir = Path(input_path)
     asm_dir = Path(output_path)
