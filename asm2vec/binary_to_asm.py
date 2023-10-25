@@ -145,18 +145,18 @@ def convert_to_asm(
             out_dir = os.path.join(asm_dir, entry.name)
             if not (os.path.exists(out_dir)):
                 os.mkdir(out_dir)
-            function_count += bin_to_asm(Path(entry), Path(out_dir), minlen_upper, magic_bytes)
-            if function_count == 0:
-                function_count += bin_to_asm(Path(entry), Path(out_dir), minlen_lower, magic_bytes)
+                function_count += bin_to_asm(Path(entry), Path(out_dir), minlen_upper, magic_bytes)
                 if function_count == 0:
-                    os.rmdir(out_dir)
-                    logging.info('The binary {} was not disassembled'.format(entry.name))
+                    function_count += bin_to_asm(Path(entry), Path(out_dir), minlen_lower, magic_bytes)
+                    if function_count == 0:
+                        os.rmdir(out_dir)
+                        logging.info('The binary {} was not disassembled'.format(entry.name))
+                    else:
+                        binary_count += 1
+                        disassembled_bins.append(entry.name)
                 else:
                     binary_count += 1
                     disassembled_bins.append(entry.name)
-            else:
-                binary_count += 1
-                disassembled_bins.append(entry.name)
     else:
         not_found += 1
         logging.info("[Error] No such file or directory: {}".format(binary_dir))
